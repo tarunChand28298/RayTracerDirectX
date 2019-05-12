@@ -25,7 +25,7 @@ struct Keyboard
 			if (prevKbdState[i] ^ currKbdState[i]) { kbdStateChanged[i] = true; }
 			else { kbdStateChanged[i] = false; }
 
-			if (kbdStateChanged[i]) { buttonDown[i] != buttonDown[i]; }
+			if (kbdStateChanged[i]) { buttonDown[i] = !buttonDown[i]; }
 		}
 	}
 };
