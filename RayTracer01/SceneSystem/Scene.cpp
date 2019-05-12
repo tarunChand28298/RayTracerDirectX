@@ -11,11 +11,11 @@ Scene::~Scene()
 
 void Scene::Start()
 {
-	AddSphere(0,  3,  0, 1, 1, 1, 1, 0.5, 0.5, 0.5);
-	AddSphere(3,  3,  0, 1, 1, 1, 0, 0.5, 0.5, 0.5);
-	AddSphere(-3, 3,  0, 1, 1, 1, 0, 0.5, 0.5, 0.5);
-	AddSphere(0,  3,  4, 1, 1, 1, 0, 0.5, 0.5, 0.5);
-	AddSphere(0,  3, -4, 1, 1, 1, 0, 0.5, 0.5, 0.5);
+	AddSphere({0,  3,  0}, 1, {1, 1, 1}, {0.5, 0.5, 0.5});
+	AddSphere({3,  3,  0}, 1, {1, 1, 0}, {0.5, 0.5, 0.5});
+	AddSphere({-3, 3,  0}, 1, {1, 1, 0}, {0.5, 0.5, 0.5});
+	AddSphere({0,  3,  4}, 1, {1, 1, 0}, {0.5, 0.5, 0.5});
+	AddSphere({0,  3, -4}, 1, {1, 1, 0}, {0.5, 0.5, 0.5});
 
 	float NearZ = 1.0f;
 	float FarZ = 10000.0f;
@@ -32,7 +32,7 @@ void Scene::Start()
 void Scene::Update()
 {
 	float yPos = 5.0f + DirectX::XMScalarSin(sinAngle / 0.0174533f)*2.0f;
-	spheresList[0].y = yPos;
+	spheresList[0].position.y = yPos;
 
 	sinAngle += 0.001f;
 	if (sinAngle > 360.0f) {
@@ -41,28 +41,38 @@ void Scene::Update()
 
 	timer += 0.01;
 	if (timer > 2.0f && timer < 3.0f) {
-		AddSphere(2, 3, float(spawnLocationZ) * 4.0f, 1, 0.5f, 0.5f, 1.0f, 0.1f, 0.3f, 0.3f);
+
+		AddSphere({ 2 * 4.0f, 3 * 2.0f, float(spawnLocationZ)  *4.0f }, 1, { 0.5f, 0.5f, 1.0f }, { 0.1f, 0.3f, 0.3f });
+		spawnLocationZ++;
+	}
+	if (timer > 4.0f && timer < 4.9f) {
+		RemoveSphere(spheresList.size() - 1);
 		spawnLocationZ++;
 	}
 
 }
 
-void Scene::AddSphere(float x, float y, float z, float r, float ax, float ay, float az, float sx, float sy, float sz)
+void Scene::AddSphere(DirectX::XMFLOAT3 pos, float rad, DirectX::XMFLOAT3 albedo, DirectX::XMFLOAT3 specular)
 {
-	Sphere s = { x, y, z, r, ax, ay, az, sx, sy, sz };
+	
+	Sphere s = { pos, rad, albedo, specular };
 	spheresList.push_back(s);
 
-	for (auto& cb : callbacks){	cb(*this);}
+	for (std::function<void(const Scene&)> clbk : subscribedFxns){	
+		clbk(*this);
+	}
 }
 
 void Scene::RemoveSphere(int index)
 {
 	spheresList.erase(spheresList.begin() + index);
 
-	for (auto& cb : callbacks) { cb(*this); }
+	for (std::function<void(const Scene&)> clbk : subscribedFxns) { 
+		clbk(*this); 
+	}
 }
 
-void Scene::OnSphereChange(std::function<void(const Scene&)> callback)
+void Scene::OnSphereChange(std::function<void(const Scene&)> subscriber)
 {
-	callbacks.push_back(callback);
+	subscribedFxns.push_back(subscriber);
 }

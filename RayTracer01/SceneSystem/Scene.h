@@ -4,10 +4,10 @@
 #include <functional>
 
 struct Sphere {
-	float x, y, z;
+	DirectX::XMFLOAT3 position;
 	float radius;
-	float albedoX, albedoY, albedoZ;
-	float specX, specY, specZ;
+	DirectX::XMFLOAT3 albedo;
+	DirectX::XMFLOAT3 specular;
 };
 
 struct Camera {
@@ -37,9 +37,9 @@ public:
 	void Start();
 	void Update();
 
-	void AddSphere(float x, float y, float z, float r, float ax, float ay, float az, float sx, float sy, float sz);
+	void AddSphere(DirectX::XMFLOAT3 pos, float rad, DirectX::XMFLOAT3 albedo, DirectX::XMFLOAT3 specular);
 	void RemoveSphere(int index);
 
-	std::vector< std::function<void(const Scene&)>> callbacks;
-	void OnSphereChange(std::function<void(const Scene&)> callback);
+	std::vector<std::function<void(const Scene&)>> subscribedFxns;
+	void OnSphereChange(std::function<void(const Scene&)> subscriber);
 };
