@@ -2,6 +2,7 @@
 #include <vector>
 #include <DirectXMath.h>
 #include <functional>
+#include "../InputSystem/Inputs.h"
 
 struct Sphere {
 	DirectX::XMFLOAT3 position;
@@ -30,6 +31,9 @@ public:
 	Camera cam;
 	DirectionalLight dirLight;
 
+	Keyboard kbd;
+	XBoxController controller;
+
 	float sinAngle = 0.0f;
 	float timer = 0.0f;
 	int spawnLocationZ = 0;
@@ -40,6 +44,7 @@ public:
 	void AddSphere(DirectX::XMFLOAT3 pos, float rad, DirectX::XMFLOAT3 albedo, DirectX::XMFLOAT3 specular);
 	void RemoveSphere(int index);
 
-	std::vector<std::function<void(const Scene&)>> subscribedFxns;
+
+	std::vector<std::function<void(const Scene&)>> subscribedFunctions;
 	void OnSphereChange(std::function<void(const Scene&)> subscriber);
 };

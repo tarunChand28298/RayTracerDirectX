@@ -38,6 +38,9 @@
     <ClInclude Include="SceneSystem\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="InputSystem\Inputs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ComputeShader.hlsl" />

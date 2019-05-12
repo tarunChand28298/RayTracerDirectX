@@ -31,6 +31,9 @@ void Scene::Start()
 
 void Scene::Update()
 {
+	kbd.UpdateKeyboard();
+	controller.UpdateController();
+
 	float yPos = 5.0f + DirectX::XMScalarSin(sinAngle / 0.0174533f)*2.0f;
 	spheresList[0].position.y = yPos;
 
@@ -39,17 +42,17 @@ void Scene::Update()
 		sinAngle = 0.0f;
 	}
 
-	timer += 0.01;
-	if (timer > 2.0f && timer < 3.0f) {
+	spheresList[1].position.x += controller.leftStickX;
+	spheresList[1].position.z += controller.leftStickY;
 
-		AddSphere({ 2 * 4.0f, 3 * 2.0f, float(spawnLocationZ)  *4.0f }, 1, { 0.5f, 0.5f, 1.0f }, { 0.1f, 0.3f, 0.3f });
-		spawnLocationZ++;
+	if (kbd.buttonDown[VK_SPACE]) {
+		spheresList[2].position.y += 0.05f;
+		AddSphere({ 2, 3, 4 }, 2, { 1, 0, 1 }, { 0.2, 0.2, 0.2 });
 	}
-	if (timer > 4.0f && timer < 4.9f) {
-		RemoveSphere(spheresList.size() - 1);
-		spawnLocationZ++;
+	if (kbd.buttonDown[VK_SHIFT] && spheresList.size()>5) {
+		spheresList[2].position.y -= 0.05f;
+		RemoveSphere(spheresList.size()-1);
 	}
-
 }
 
 void Scene::AddSphere(DirectX::XMFLOAT3 pos, float rad, DirectX::XMFLOAT3 albedo, DirectX::XMFLOAT3 specular)
@@ -58,7 +61,7 @@ void Scene::AddSphere(DirectX::XMFLOAT3 pos, float rad, DirectX::XMFLOAT3 albedo
 	Sphere s = { pos, rad, albedo, specular };
 	spheresList.push_back(s);
 
-	for (std::function<void(const Scene&)> clbk : subscribedFxns){	
+	for (std::function<void(const Scene&)> clbk : subscribedFunctions){	
 		clbk(*this);
 	}
 }
@@ -67,12 +70,12 @@ void Scene::RemoveSphere(int index)
 {
 	spheresList.erase(spheresList.begin() + index);
 
-	for (std::function<void(const Scene&)> clbk : subscribedFxns) { 
+	for (std::function<void(const Scene&)> clbk : subscribedFunctions) { 
 		clbk(*this); 
 	}
 }
 
 void Scene::OnSphereChange(std::function<void(const Scene&)> subscriber)
 {
-	subscribedFxns.push_back(subscriber);
+	subscribedFunctions.push_back(subscriber);
 }
