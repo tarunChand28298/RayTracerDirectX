@@ -4,35 +4,40 @@
 
 struct Keyboard 
 {
-	bool buttonDown[256];
-	bool kbdStateChanged[256];
-	BYTE prevKbdState[256];
-	BYTE currKbdState[256];
-	BYTE defKbdState[256];
+	bool spaceDown;
+	bool shiftDown;
 
-	void StartKeyboard() {
-		memset(prevKbdState, 0, sizeof(BYTE)*ARRAYSIZE(prevKbdState));
-		memset(buttonDown, false, sizeof(bool)*ARRAYSIZE(buttonDown));
-	}
+	float horizontal;
+	float vertical;
 
 	void UpdateKeyboard() {
-		memcpy(prevKbdState, currKbdState, sizeof(BYTE)*ARRAYSIZE(prevKbdState));
-		GetKeyboardState(currKbdState);
-		SetKeyboardState(defKbdState);	//TODO: If there is problem with caps-lock and stuff, this is probably the cause.
-		
-		for (int i = 0; i < 256; i++)
-		{
-			if (prevKbdState[i] ^ currKbdState[i]) { kbdStateChanged[i] = true; }
-			else { kbdStateChanged[i] = false; }
+		spaceDown = GetAsyncKeyState(VK_SPACE);
+		shiftDown = GetAsyncKeyState(VK_SHIFT);
 
-			if (kbdStateChanged[i]) { buttonDown[i] != buttonDown[i]; }
-		}
+		horizontal = 0;
+		if (GetAsyncKeyState('D')) { horizontal += 1; }
+		if (GetAsyncKeyState('A')) { horizontal -= 1; }
+
+		vertical = 0;
+		if (GetAsyncKeyState('W')) { vertical += 1; }
+		if (GetAsyncKeyState('S')) { vertical -= 1; }
 	}
 };
 
 struct Mouse 
 {
+	HWND relativeToWindow;
+	POINT mousePos;
+	bool leftMouseButton;
+	bool rightMouseButton;
 
+	void UpdateMouse() {
+		GetCursorPos(&mousePos);
+		ScreenToClient(relativeToWindow, &mousePos);
+
+		leftMouseButton = GetKeyState(VK_LBUTTON) & 0x80;
+		rightMouseButton = GetKeyState(VK_RBUTTON) & 0x80;
+	}
 };
 
 struct XBoxController

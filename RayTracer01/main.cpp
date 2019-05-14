@@ -4,7 +4,7 @@
 int WINAPI WinMain(HINSTANCE instance, HINSTANCE prevInstance, char* cmdArgs, int cmdShow) {
 	
 	RenderingWindow mainWindow(instance);
-	Scene mainScene;
+	Scene mainScene; mainScene.mouse.relativeToWindow = mainWindow.windowHandle;
 	RenderingSystem renderer(mainScene, mainWindow);
 
 	while (mainWindow.running) {
