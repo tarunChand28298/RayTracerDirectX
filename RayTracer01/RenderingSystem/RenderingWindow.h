@@ -12,6 +12,8 @@ public:
 	int width;
 	int height;
 
+	
+
 	void Initialize(HINSTANCE instance);
 	void HandleMessages();
 	void Destroy();

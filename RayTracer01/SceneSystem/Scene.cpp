@@ -49,11 +49,13 @@ void Scene::Update()
 	spheresList[4].position.x += kbd.horizontal * 0.5f;
 	spheresList[4].position.z += kbd.vertical * 0.5f;
 
+	spheresList[2].position = mouseToWorld(mouse.mousePos);
+
 	if (kbd.spaceDown) { spheresList[3].position.y += 0.5f; }
 	if (kbd.shiftDown) { spheresList[3].position.y -= 0.5f; }
 
 	if (mouse.leftMouseButton) {
-		AddSphere(mousePosToWorld(mouse.mousePos), 1, { 1.0f, 0.5f, 0.3f }, { 0.4f, 0.4f, 0.4f });
+		AddSphere(mouseToWorld(mouse.mousePos), 1, { 1.0f, 0.5f, 0.3f }, { 0.4f, 0.4f, 0.4f });
 	}
 	if (mouse.rightMouseButton && spheresList.size() > 5) {
 		RemoveSphere(spheresList.size() - 1);
@@ -65,7 +67,6 @@ void Scene::AddSphere(DirectX::XMFLOAT3 pos, float rad, DirectX::XMFLOAT3 albedo
 	
 	Sphere s = { pos, rad, albedo, specular };
 	spheresList.push_back(s);
-	OutputDebugString("Left mouse clicked\n");
 
 	for (std::function<void(const Scene&)> clbk : subscribedFunctions){	
 		clbk(*this);
@@ -75,7 +76,6 @@ void Scene::AddSphere(DirectX::XMFLOAT3 pos, float rad, DirectX::XMFLOAT3 albedo
 void Scene::RemoveSphere(int index)
 {
 	spheresList.erase(spheresList.begin() + index);
-	OutputDebugString("right mouse clicked\n");
 
 	for (std::function<void(const Scene&)> clbk : subscribedFunctions) { 
 		clbk(*this); 
