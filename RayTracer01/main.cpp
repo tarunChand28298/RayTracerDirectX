@@ -6,7 +6,7 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE prevInstance, char* cmdArgs, in
 	RenderingWindow mainWindow(instance);
 	Scene mainScene; mainScene.mouse.relativeToWindow = mainWindow.windowHandle;
 	RenderingSystem renderer(mainScene, mainWindow);
-
+	//update loop
 	while (mainWindow.running) {
 		mainWindow.HandleMessages();
 		mainScene.Update();
